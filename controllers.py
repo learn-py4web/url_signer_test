@@ -43,3 +43,22 @@ def index():
 @action.uses('other.html', url_signer.verify())
 def other():
     return dict()
+
+@action('somepath')
+@action.uses(url_signer)
+def somepath():
+   # This controller signs a URL.
+   signed_url = URL('anotherpath', signer=url_signer)
+   print("Signed URL:", type(signed_url), signed_url)
+   return (
+        "<html><body><br><h4>Go to a signed url</h4><br><br>"
+        + '<a class="button" href="%s">Go</a><br><br>'
+        + '<form><button type="submit" formaction="%s">T R Y</button></form>'
+        + "</body></html>"
+    ) % (signed_url, signed_url)
+
+@action('anotherpath')
+@action.uses(url_signer.verify())
+def anotherpath():
+   # The signature has been verified.
+   return ("<html><body><br><h3>This is ANOTHERPATH !!</h3></body></html>")
